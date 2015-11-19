@@ -1,0 +1,82 @@
+<div id="container">
+	<div class="row">
+		{{#each trainers}}
+		<div class="col-md-3 col-sm-6 trainer_col">
+			<div class="trainer" data-id="{{this.id}}">
+				<img src="{{this.pictureUrl}}" data-pin-nopin="true">
+				<h2>{{this.GetFullName}}</h2>
+			</div>
+		</div>
+		{{/each}}
+	</div>
+</div>
+
+<style>
+.row{
+	margin:0px;
+	padding-top:120px;
+}
+.trainer{
+	margin:10px;
+	height: 390px;
+	text-align: center;
+	cursor: pointer;
+}
+.trainer img{
+	width:30%;
+}
+
+
+</style>
+
+<script type="text/javascript">
+	$(".trainer").click(function(){
+	$( this ).unbind( "click" );
+	 $(".trainer").not(this).animate({
+	 	opacity: 0.0,
+	  }, 300, function() {
+	  this.closest('div').remove();
+	 });
+	 // $( this ).parent().get( 0 ).css({
+		// position: 'absolute'
+
+	 // });
+	$($( this ).parent().get( 0 )).css({
+		 margin: 'auto',
+		 position: 'absolute',
+		 top: '150',
+		 left: '0',
+		 right: '0',
+		 bottom: '0'
+	});
+
+	$input = ('<input type="text" class="password" size="20" value="" placeholder="Password"/>')
+
+
+
+	$($( this ).get( 0 )).append($input);
+	$(".password").on("keyup", function(e){
+		var code = e.which;
+		if(code ==13){
+			var trainerId = $(this).closest("div.trainer").data("id");
+			var password = $(this).val();
+			login(trainerId, password);
+		}
+	});
+	});
+	
+	function login(trainerId, password){
+		$.ajax({
+			url: "loginRequest",
+			method: "POST",
+			data: {trainerId: trainerId, password: password},
+			success:function(data) {
+				if(!data.valid){
+					alert(data.message);
+				}else{
+					window.location = data.redirect;
+				}
+			}
+		});
+	}
+</script>
